@@ -62,7 +62,7 @@ public class TimedTextObject {
     //list of styles (id, reference)
     public Hashtable<String, Style> styling;
 
-    //list of captions (begin time, reference)
+    /**list of captions (begin time, reference)*/
     //represented by a tree map to maintain order
     public TreeMap<Integer, Caption> captions;
 
