@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Anki_storage_permission">Open the ankidroid and grant storage permission for that</string>
+    <string name="Anki_added">Added to ankidroid</string>
+    <string name="Anki_not_installed">Ankidroid is not installed</string>
+    <string name="Anki_unexpected_error">Some error happened in ankidroid</string>
+    <string name="Anki_word_exist_already">Already added to ankidroid</string>
+
+    <string name="connection_error_title">Connection error</string>
+    <string name="connection_error_message">Please check your internet connection and try again</string>
+    <string name="unexpected_error">Network error.Please check you internet connection and try again</string>
+    <string name="online_translation_error">Server error.There is a problem with online translation server, try again later</string>
+
+    <string name="dictionary_is_not_ready">Dictionary is not ready at this moment try again in a few seconds</string>
+    <string name="dictionary_not_enough_space">There is not enough free space in your device free up some space and restart the app </string>
+    <string name="dictionary_error">Unexpected error happend!</string>
+    <string name="tts_not_available">Speech output isn\'t available for this language</string>
+
+    <string name="subtitle_track">Subtitle Track</string>
+
+</resources>
