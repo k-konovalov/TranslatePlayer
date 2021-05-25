@@ -7,6 +7,7 @@ import android.os.Environment
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import org.videolan.libvlc.MediaPlayer
 import ru.konovalovk.subtitle_parser.habib.SubtitleParser
@@ -18,13 +19,14 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 
-class VideoPlayerViewModel : ViewModel() {
+class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {
     val TAG = this::class.java.simpleName
 
     val executor = Executors.newSingleThreadExecutor()
 
     private var subtitles: Array<Subtitle>? = null
     val liveCurSubtitleContent = MutableLiveData<String>()
+    val EXTRA_CURR_TIME = "EXTRA_CURR_TIME"
     val currPlaybackTime = MutableLiveData<Int>()
     private var currSubtitle = Subtitle(0,1,"")
 
@@ -106,6 +108,6 @@ class VideoPlayerViewModel : ViewModel() {
     }
 
     enum class State{
-        Ready, LaunchVideo
+        Ready, LaunchVideo, PausedVideo
     }
 }
