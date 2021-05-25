@@ -36,6 +36,5 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.flMain, VideoPlayerFragment())
             .commit()
-
     }
 }

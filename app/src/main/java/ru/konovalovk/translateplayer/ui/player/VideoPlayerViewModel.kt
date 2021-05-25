@@ -1,24 +1,22 @@
 package ru.konovalovk.translateplayer.ui.player
 
 import android.content.Context
+import android.media.MediaMetadataRetriever
 import android.os.Build
 import android.os.Environment
 import android.util.Log
-import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import org.videolan.libvlc.LibVLC
-import org.videolan.libvlc.Media
 import org.videolan.libvlc.MediaPlayer
 import ru.konovalovk.subtitle_parser.habib.SubtitleParser
 import ru.konovalovk.subtitle_parser.subs.TimedTextObject
-import ru.konovalovk.translateplayer.R
 import ru.konovalovk.translateplayer.Subtitle
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+
 
 class VideoPlayerViewModel : ViewModel() {
     val TAG = this::class.java.simpleName
@@ -27,6 +25,7 @@ class VideoPlayerViewModel : ViewModel() {
 
     private var subtitles: Array<Subtitle>? = null
     val liveCurSubtitleContent = MutableLiveData<String>()
+    val currPlaybackTime = MutableLiveData<Int>()
     private var currSubtitle = Subtitle(0,1,"")
 
     val eventListener = object : MediaPlayer.EventListener {
@@ -36,6 +35,7 @@ class VideoPlayerViewModel : ViewModel() {
                 val startTime = System.currentTimeMillis()
                 val currTime = event?.timeChanged ?: 0L
                 if (event?.timeChanged != 0L) {
+                    currPlaybackTime.postValue(currTime.toInt())
                     val isSubtitleStillShowing = currTime in currSubtitle.startTime..currSubtitle.endTime
                     if (!isSubtitleStillShowing) {
                         liveCurSubtitleContent.postValue("")
@@ -89,6 +89,22 @@ class VideoPlayerViewModel : ViewModel() {
         }
         return out
     }
+
+    fun convertSecondsToHMmSs(millis: Long): String {
+        return String.format("%02d:%02d:%02d",
+            TimeUnit.MILLISECONDS.toHours(millis),
+            TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)), // The change is in this line
+            TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
+    }
+
+    private fun getDuration(file: File): String? {
+        val mediaMetadataRetriever = MediaMetadataRetriever()
+        mediaMetadataRetriever.setDataSource(file.absolutePath)
+        val durationStr =
+            mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+        return durationStr
+    }
+
     enum class State{
         Ready, LaunchVideo
     }
