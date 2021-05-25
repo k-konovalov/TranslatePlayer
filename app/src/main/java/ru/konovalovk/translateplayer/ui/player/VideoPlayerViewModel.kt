@@ -30,6 +30,9 @@ class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {
     val currPlaybackTime = MutableLiveData<Int>()
     private var currSubtitle = Subtitle(0,1,"")
 
+    var lastState = State.Ready
+    val state = MutableLiveData<State>()
+
     val eventListener = object : MediaPlayer.EventListener {
         @RequiresApi(Build.VERSION_CODES.N)
         override fun onEvent(event: MediaPlayer.Event?) {
@@ -68,13 +71,11 @@ class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {
                     list.add(Subtitle(it.start.milliseconds, it.end.milliseconds, it.content))
                 }
                 subtitles = list.toTypedArray()
-                state.postValue(State.LaunchVideo)
+                state.postValue(State.Starting)
                 //Log.e("MainActivity", str)
             } else Log.e(TAG, "Not success")
         }
     }
-
-    val state = MutableLiveData<State>()
 
     fun fileFromAssets(context: Context, filepath: String, filename: String): File? {
         val directory = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: return null
@@ -108,6 +109,6 @@ class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {
     }
 
     enum class State{
-        Ready, LaunchVideo, PausedVideo
+        Ready, Starting, Playing, Pausing, Stopping
     }
 }

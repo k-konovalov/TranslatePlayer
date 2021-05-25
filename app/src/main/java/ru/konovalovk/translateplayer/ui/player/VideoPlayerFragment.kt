@@ -19,20 +19,17 @@ class VideoPlayerFragment : Fragment(R.layout.video_player_fragment) {
     private val viewModel: VideoPlayerViewModel by viewModels()
     private val vlcPlayer by lazy { requireView().findViewById<VLCVideoLayout>(R.id.vlcPlayer).apply {
         setOnClickListener {
-            if(isPaused) mMediaPlayer.play()
-            else mMediaPlayer.pause()
-            isPaused = !isPaused
+            if (viewModel.state.value == VideoPlayerViewModel.State.Pausing) viewModel.state.postValue(VideoPlayerViewModel.State.Playing)
+            else viewModel.state.postValue(VideoPlayerViewModel.State.Pausing)
         }
     } }
     val mLibVLC by lazy { LibVLC(requireContext(), ArrayList<String>().apply { add("-vvv") }) }
     val mMediaPlayer by lazy { MediaPlayer(mLibVLC) }
 
-    var isPaused = false
     val tvSubtitle by lazy { requireView().findViewById<TextView>(R.id.tvSubtitles).apply {
         setOnClickListener {
-            if(isPaused) mMediaPlayer.play()
-            else mMediaPlayer.pause()
-            isPaused = !isPaused
+            if (viewModel.state.value == VideoPlayerViewModel.State.Pausing) viewModel.state.postValue(VideoPlayerViewModel.State.Playing)
+            else viewModel.state.postValue(VideoPlayerViewModel.State.Pausing)
         }
     } }
 
@@ -40,7 +37,7 @@ class VideoPlayerFragment : Fragment(R.layout.video_player_fragment) {
     val sbTime by lazy { requireView().findViewById<SeekBar>(R.id.sbTime).apply {
         setOnSeekBarChangeListener(object:SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if(isPaused) tvTime.text = viewModel.convertSecondsToHMmSs(progress.toLong())
+                if (viewModel.state.value == VideoPlayerViewModel.State.Pausing) tvTime.text = viewModel.convertSecondsToHMmSs(progress.toLong())
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -73,15 +70,22 @@ class VideoPlayerFragment : Fragment(R.layout.video_player_fragment) {
             tvTime.text = viewModel.convertSecondsToHMmSs(it.toLong())
         })
         viewModel.state.observe(viewLifecycleOwner, {
-            if(viewModel.state.value == it) return@observe
+            if(viewModel.lastState == it) return@observe
+            viewModel.lastState = it
             when(it){
                 VideoPlayerViewModel.State.Ready -> {
 
                 }
-                VideoPlayerViewModel.State.LaunchVideo -> vlcPlayer.doOnLayout {
+                VideoPlayerViewModel.State.Starting -> vlcPlayer.doOnLayout {
                     launchVideo(viewModel.savedState.get<Int>(viewModel.EXTRA_CURR_TIME))
                 }
-                VideoPlayerViewModel.State.PausedVideo -> {
+                VideoPlayerViewModel.State.Playing -> {
+                    mMediaPlayer.play()
+                }
+                VideoPlayerViewModel.State.Pausing -> {
+                    mMediaPlayer.pause()
+                }
+                VideoPlayerViewModel.State.Stopping -> {
                     mMediaPlayer.stop()
                     mMediaPlayer.detachViews()
                     viewModel.savedState.set(viewModel.EXTRA_CURR_TIME, viewModel.currPlaybackTime.value)
@@ -92,7 +96,7 @@ class VideoPlayerFragment : Fragment(R.layout.video_player_fragment) {
 
     override fun onStop() {
         super.onStop()
-        viewModel.state.postValue(VideoPlayerViewModel.State.PausedVideo)
+        viewModel.state.postValue(VideoPlayerViewModel.State.Stopping)
     }
 
     override fun onDestroy() {
@@ -113,7 +117,7 @@ class VideoPlayerFragment : Fragment(R.layout.video_player_fragment) {
             } catch (e: IOException) {
                 throw RuntimeException("Invalid asset folder")
             }
-            play()
+            viewModel.state.postValue(VideoPlayerViewModel.State.Playing)
             //Todo: Think!!!
             viewModel.executor.execute {
                 Thread.sleep(100)
