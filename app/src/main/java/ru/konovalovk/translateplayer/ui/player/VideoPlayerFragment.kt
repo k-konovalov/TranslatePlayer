@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -86,6 +87,7 @@ class VideoPlayerFragment : Fragment(R.layout.video_player_fragment) {
                     mMediaPlayer.pause()
                 }
                 VideoPlayerViewModel.State.Stopping -> {
+                    (requireActivity() as AppCompatActivity).supportActionBar?.show()
                     mMediaPlayer.stop()
                     mMediaPlayer.detachViews()
                     viewModel.savedState.set(viewModel.EXTRA_CURR_TIME, viewModel.currPlaybackTime.value)
@@ -94,8 +96,16 @@ class VideoPlayerFragment : Fragment(R.layout.video_player_fragment) {
         })
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onStart() {
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+        if(viewModel.state.value == VideoPlayerViewModel.State.Stopping){
+            viewModel.state.postValue(VideoPlayerViewModel.State.Starting)
+        }
+        super.onStart()
+    }
+
+    override fun onPause() {
+        super.onPause()
         viewModel.state.postValue(VideoPlayerViewModel.State.Stopping)
     }
 
