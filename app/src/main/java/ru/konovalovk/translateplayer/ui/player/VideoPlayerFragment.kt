@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
@@ -29,8 +30,8 @@ class VideoPlayerFragment : Fragment(R.layout.video_player_fragment) {
 
     val tvSubtitle by lazy { requireView().findViewById<TextView>(R.id.tvSubtitles).apply {
         setOnClickListener {
-            if (viewModel.state.value == VideoPlayerViewModel.State.Pausing) viewModel.state.postValue(VideoPlayerViewModel.State.Playing)
-            else viewModel.state.postValue(VideoPlayerViewModel.State.Pausing)
+            viewModel.translatePhrase(text.toString())
+            if (viewModel.state.value != VideoPlayerViewModel.State.Pausing) viewModel.state.postValue(VideoPlayerViewModel.State.Pausing)
         }
     } }
 
@@ -70,6 +71,7 @@ class VideoPlayerFragment : Fragment(R.layout.video_player_fragment) {
             if (sbTime.max == 0) sbTime.max = mMediaPlayer.length.toInt()
             tvTime.text = viewModel.convertSecondsToHMmSs(it.toLong())
         })
+        viewModel.translatedWord.observe(viewLifecycleOwner, { Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()})
         viewModel.state.observe(viewLifecycleOwner, {
             if(viewModel.lastState == it) return@observe
             viewModel.lastState = it
@@ -96,12 +98,12 @@ class VideoPlayerFragment : Fragment(R.layout.video_player_fragment) {
         })
     }
 
-    override fun onStart() {
+    override fun onResume() {
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
         if(viewModel.state.value == VideoPlayerViewModel.State.Stopping){
             viewModel.state.postValue(VideoPlayerViewModel.State.Starting)
         }
-        super.onStart()
+        super.onResume()
     }
 
     override fun onPause() {

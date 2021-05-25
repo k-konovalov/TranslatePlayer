@@ -52,4 +52,5 @@ dependencies {
 
     implementation 'org.videolan.android:libvlc-all:3.1.12'
     implementation project(':subtitle_parser')
+    implementation project(':repository')
 }

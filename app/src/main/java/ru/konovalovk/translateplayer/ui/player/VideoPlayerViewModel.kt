@@ -9,7 +9,10 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import org.videolan.libvlc.MediaPlayer
+import ru.konovalovk.repository.network.NetworkModule
 import ru.konovalovk.subtitle_parser.habib.SubtitleParser
 import ru.konovalovk.subtitle_parser.subs.TimedTextObject
 import ru.konovalovk.translateplayer.Subtitle
@@ -68,7 +71,8 @@ class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {
             if (isSuccessful) subtitleFile?.run {
                 val list = mutableListOf<Subtitle>()
                 captions.values.forEach {
-                    list.add(Subtitle(it.start.milliseconds, it.end.milliseconds, it.content))
+                    val improvedContent = it.content.replace("<br />","\n")
+                    list.add(Subtitle(it.start.milliseconds, it.end.milliseconds, improvedContent))
                 }
                 subtitles = list.toTypedArray()
                 state.postValue(State.Starting)
@@ -76,6 +80,8 @@ class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {
             } else Log.e(TAG, "Not success")
         }
     }
+
+    val translatedWord = MutableLiveData<String>()
 
     fun fileFromAssets(context: Context, filepath: String, filename: String): File? {
         val directory = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: return null
@@ -100,12 +106,31 @@ class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {
             TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
     }
 
-    private fun getDuration(file: File): String? {
-        val mediaMetadataRetriever = MediaMetadataRetriever()
-        mediaMetadataRetriever.setDataSource(file.absolutePath)
-        val durationStr =
-            mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-        return durationStr
+    fun translateWord(text: String){
+        viewModelScope.launch {
+            val result = NetworkModule.googleApi.getWordTranslation("en","ru", text.lowercase())
+            val str = result.string()
+            Log.e(TAG, str)
+        }
+
+    }
+
+    fun translatePhrase(text: String){
+        viewModelScope.launch {
+            val improvedText = text.lowercase().replace("\n","")
+            val result = NetworkModule.googleApi.getPhraseTranslation("en","ru", improvedText)
+            val str = result.string()
+            val regex = Regex("\".+\"")
+            //"думать, что ты сможешь увидеть меня в Наруто ..."
+            val founded = regex.find(str)
+            //[[["интересно, где он сейчас ...","i wonder where he is right now...",null,null
+            val searchedValue = founded?.value ?: "empty"
+            val finalRes = searchedValue.split("\",\"").apply { forEach { phrase -> phrase.removeRange(0,1) } }
+            if (finalRes.isNotEmpty()) {
+                translatedWord.postValue(finalRes.first())
+                Log.i(TAG, finalRes.first())
+            }
+        }
     }
 
     enum class State{
