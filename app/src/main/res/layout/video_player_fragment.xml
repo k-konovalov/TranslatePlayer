@@ -23,6 +23,8 @@
 
     <SeekBar
         android:id="@+id/sbTime"
+        android:visibility="invisible"
+        tools:visibility="visible"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:max="0"

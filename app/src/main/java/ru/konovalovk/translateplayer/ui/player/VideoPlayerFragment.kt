@@ -4,20 +4,24 @@ import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.google.android.material.snackbar.Snackbar
 import org.videolan.libvlc.LibVLC
 import org.videolan.libvlc.Media
 import org.videolan.libvlc.MediaPlayer
 import org.videolan.libvlc.util.VLCVideoLayout
+import ru.konovalovk.interactor.TranslatorInteractor
 import ru.konovalovk.subtitle_parser.habib.SubtitleParser
 import ru.konovalovk.translateplayer.R
 import java.io.IOException
 
 class VideoPlayerFragment : Fragment(R.layout.video_player_fragment) {
     private val viewModel: VideoPlayerViewModel by viewModels()
+
     private val vlcPlayer by lazy { requireView().findViewById<VLCVideoLayout>(R.id.vlcPlayer).apply {
         setOnClickListener {
             if (viewModel.state.value == VideoPlayerViewModel.State.Pausing) viewModel.state.postValue(VideoPlayerViewModel.State.Playing)
@@ -29,11 +33,10 @@ class VideoPlayerFragment : Fragment(R.layout.video_player_fragment) {
 
     val tvSubtitle by lazy { requireView().findViewById<TextView>(R.id.tvSubtitles).apply {
         setOnClickListener {
-            if (viewModel.state.value == VideoPlayerViewModel.State.Pausing) viewModel.state.postValue(VideoPlayerViewModel.State.Playing)
-            else viewModel.state.postValue(VideoPlayerViewModel.State.Pausing)
+            viewModel.translatorInteractor.translatePhrase(text.toString(), TranslatorInteractor.Translator.Google)
+            if (viewModel.state.value != VideoPlayerViewModel.State.Pausing) viewModel.state.postValue(VideoPlayerViewModel.State.Pausing)
         }
     } }
-
     val tvTime by lazy { requireView().findViewById<TextView>(R.id.tvTime)}
     val sbTime by lazy { requireView().findViewById<SeekBar>(R.id.sbTime).apply {
         setOnSeekBarChangeListener(object:SeekBar.OnSeekBarChangeListener{
@@ -52,9 +55,12 @@ class VideoPlayerFragment : Fragment(R.layout.video_player_fragment) {
             }
         })
     }}
+    var snackBar: Snackbar? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+
         val newFile = viewModel.fileFromAssets(requireContext(), "", "naruto.srt") ?: return
 
         SubtitleParser.getInstance().run {
@@ -66,9 +72,17 @@ class VideoPlayerFragment : Fragment(R.layout.video_player_fragment) {
             tvSubtitle.text = it
         })
         viewModel.currPlaybackTime.observe(viewLifecycleOwner,{
+            if (sbTime.max == 0) {
+                sbTime.max = mMediaPlayer.length.toInt()
+                sbTime.visibility = View.VISIBLE
+                //Todo: Animation here
+            }
             sbTime.progress = it
-            if (sbTime.max == 0) sbTime.max = mMediaPlayer.length.toInt()
             tvTime.text = viewModel.convertSecondsToHMmSs(it.toLong())
+        })
+        viewModel.translatorInteractor.translatedWord.observe(viewLifecycleOwner, {
+            snackBar = Snackbar.make(requireView(), it ?: return@observe, Snackbar.LENGTH_LONG)
+            snackBar?.show()
         })
         viewModel.state.observe(viewLifecycleOwner, {
             if(viewModel.lastState == it) return@observe
@@ -81,6 +95,7 @@ class VideoPlayerFragment : Fragment(R.layout.video_player_fragment) {
                     launchVideo(viewModel.savedState.get<Int>(viewModel.EXTRA_CURR_TIME))
                 }
                 VideoPlayerViewModel.State.Playing -> {
+                    snackBar?.dismiss()
                     mMediaPlayer.play()
                 }
                 VideoPlayerViewModel.State.Pausing -> {
@@ -96,12 +111,11 @@ class VideoPlayerFragment : Fragment(R.layout.video_player_fragment) {
         })
     }
 
-    override fun onStart() {
-        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+    override fun onResume() {
         if(viewModel.state.value == VideoPlayerViewModel.State.Stopping){
             viewModel.state.postValue(VideoPlayerViewModel.State.Starting)
         }
-        super.onStart()
+        super.onResume()
     }
 
     override fun onPause() {

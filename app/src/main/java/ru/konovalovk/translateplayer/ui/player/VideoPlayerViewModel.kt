@@ -9,7 +9,11 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import org.videolan.libvlc.MediaPlayer
+import ru.konovalovk.interactor.TranslatorInteractor
+import ru.konovalovk.repository.network.NetworkModule
 import ru.konovalovk.subtitle_parser.habib.SubtitleParser
 import ru.konovalovk.subtitle_parser.subs.TimedTextObject
 import ru.konovalovk.translateplayer.Subtitle
@@ -22,6 +26,7 @@ import java.util.concurrent.TimeUnit
 class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {
     val TAG = this::class.java.simpleName
 
+    val translatorInteractor = TranslatorInteractor()
     val executor = Executors.newSingleThreadExecutor()
 
     private var subtitles: Array<Subtitle>? = null
@@ -58,24 +63,18 @@ class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {
             }
         }
     }
-    val iSubtitleParserListener = object : SubtitleParser.ISubtitleParserListener {
-        @RequiresApi(Build.VERSION_CODES.N)
-        override fun onSubtitleParseCompleted(
-            isSuccessful: Boolean,
-            subtitleFile: TimedTextObject?,
-            subtitlePath: String?
-        ) {
+    val iSubtitleParserListener = SubtitleParser.ISubtitleParserListener { isSuccessful, subtitleFile, subtitlePath ->
             if (isSuccessful) subtitleFile?.run {
                 val list = mutableListOf<Subtitle>()
                 captions.values.forEach {
-                    list.add(Subtitle(it.start.milliseconds, it.end.milliseconds, it.content))
+                    val improvedContent = it.content.replace("<br />","\n")
+                    list.add(Subtitle(it.start.milliseconds, it.end.milliseconds, improvedContent))
                 }
                 subtitles = list.toTypedArray()
                 state.postValue(State.Starting)
                 //Log.e("MainActivity", str)
             } else Log.e(TAG, "Not success")
         }
-    }
 
     fun fileFromAssets(context: Context, filepath: String, filename: String): File? {
         val directory = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: return null
@@ -98,14 +97,6 @@ class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {
             TimeUnit.MILLISECONDS.toHours(millis),
             TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)), // The change is in this line
             TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
-    }
-
-    private fun getDuration(file: File): String? {
-        val mediaMetadataRetriever = MediaMetadataRetriever()
-        mediaMetadataRetriever.setDataSource(file.absolutePath)
-        val durationStr =
-            mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-        return durationStr
     }
 
     enum class State{
