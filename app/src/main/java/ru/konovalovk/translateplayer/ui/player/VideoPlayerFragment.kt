@@ -56,6 +56,8 @@ class VideoPlayerFragment : Fragment(R.layout.video_player_fragment) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+
         val newFile = viewModel.fileFromAssets(requireContext(), "", "naruto.srt") ?: return
 
         SubtitleParser.getInstance().run {
@@ -71,7 +73,7 @@ class VideoPlayerFragment : Fragment(R.layout.video_player_fragment) {
             if (sbTime.max == 0) sbTime.max = mMediaPlayer.length.toInt()
             tvTime.text = viewModel.convertSecondsToHMmSs(it.toLong())
         })
-        viewModel.translatedWord.observe(viewLifecycleOwner, { Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()})
+        viewModel.translatedWord.observe(viewLifecycleOwner, { Toast.makeText(requireContext(), it ?: return@observe, Toast.LENGTH_LONG).show()})
         viewModel.state.observe(viewLifecycleOwner, {
             if(viewModel.lastState == it) return@observe
             viewModel.lastState = it
@@ -99,7 +101,6 @@ class VideoPlayerFragment : Fragment(R.layout.video_player_fragment) {
     }
 
     override fun onResume() {
-        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
         if(viewModel.state.value == VideoPlayerViewModel.State.Stopping){
             viewModel.state.postValue(VideoPlayerViewModel.State.Starting)
         }

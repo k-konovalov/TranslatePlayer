@@ -117,20 +117,25 @@ class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {
 
     fun translatePhrase(text: String){
         viewModelScope.launch {
-            val improvedText = text.lowercase().replace("\n","")
-            val result = NetworkModule.googleApi.getPhraseTranslation("en","ru", improvedText)
-            val str = result.string()
-            val regex = Regex("\".+\"")
-            //"думать, что ты сможешь увидеть меня в Наруто ..."
-            val founded = regex.find(str)
-            //[[["интересно, где он сейчас ...","i wonder where he is right now...",null,null
-            val searchedValue = founded?.value ?: "empty"
-            val finalRes = searchedValue.split("\",\"").apply { forEach { phrase -> phrase.removeRange(0,1) } }
-            if (finalRes.isNotEmpty()) {
-                translatedWord.postValue(finalRes.first())
-                Log.i(TAG, finalRes.first())
-            }
+            val improvedText = text.lowercase().replace("\n", "")
+            val result = NetworkModule.googleApi.getPhraseTranslation("en", "ru", improvedText)
+            translatedWord.postValue(parseGoogleResult(result.string()))
         }
+    }
+
+//ToDdo: to new class Translator /
+//Example - [[["интересно, где он сейчас ...","i wonder where he is right now...",null,null
+    fun parseGoogleResult(original: String): String {
+        val regex = Regex("\".+\"")
+        val founded = regex.find(original)
+        val searchedValue = founded?.value ?: "empty"
+        val splitted = searchedValue.split("\",\"")
+        if (splitted.isNotEmpty()) {
+            val res = splitted.first().let { it.substring(1, it.length) }
+            Log.i(TAG, "Translated res: $res")
+            return res//surroundings
+        }
+        return "Error: Empty translation result"
     }
 
     enum class State{
