@@ -63,13 +63,7 @@ class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {
             }
         }
     }
-    val iSubtitleParserListener = object : SubtitleParser.ISubtitleParserListener {
-        @RequiresApi(Build.VERSION_CODES.N)
-        override fun onSubtitleParseCompleted(
-            isSuccessful: Boolean,
-            subtitleFile: TimedTextObject?,
-            subtitlePath: String?
-        ) {
+    val iSubtitleParserListener = SubtitleParser.ISubtitleParserListener { isSuccessful, subtitleFile, subtitlePath ->
             if (isSuccessful) subtitleFile?.run {
                 val list = mutableListOf<Subtitle>()
                 captions.values.forEach {
@@ -81,7 +75,6 @@ class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {
                 //Log.e("MainActivity", str)
             } else Log.e(TAG, "Not success")
         }
-    }
 
     fun fileFromAssets(context: Context, filepath: String, filename: String): File? {
         val directory = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: return null

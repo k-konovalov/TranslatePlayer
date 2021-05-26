@@ -19,7 +19,6 @@ class TranslatorInteractor {
             val str = result.string()
             Log.e(TAG, str)
         }
-
     }
 
     fun translatePhrase(text: String, translator: Translator) {
