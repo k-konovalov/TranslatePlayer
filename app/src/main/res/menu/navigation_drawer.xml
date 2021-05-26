@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@id/statisticsFragment"
+        android:icon="@drawable/ic_three_pieces_pie_chart"
+        android:title="@string/fragment_statistics_label"/>
+    <item
+        android:id="@id/choiceMediaFragment"
+        android:icon="@drawable/ic_play"
+        android:title="@string/fragment_video_player_label"/>
+    <item
+        android:id="@id/choiceWordsFragments"
+        android:icon="@drawable/ic_export"
+        android:title="@string/item_export_words_title"/>
+    <item
+        android:id="@id/settingsFragment"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/fragment_settings_label"/>
+</menu>

@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
@@ -19,7 +18,7 @@ import ru.konovalovk.subtitle_parser.habib.SubtitleParser
 import ru.konovalovk.translateplayer.R
 import java.io.IOException
 
-class VideoPlayerFragment : Fragment(R.layout.video_player_fragment) {
+class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
     private val viewModel: VideoPlayerViewModel by viewModels()
 
     private val vlcPlayer by lazy { requireView().findViewById<VLCVideoLayout>(R.id.vlcPlayer).apply {

@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">TranslatePlayer</string>
+
+    <string name="fragment_settings_label">Settings</string>
+    <string name="fragment_choice_words_label">Choose Words</string>
+    <string name="fragment_choice_media_label">Choose Media</string>
+    <string name="fragment_choice_destination_label">Choose Destination</string>
+    <string name="fragment_statistics_label">Statistics</string>
+    <string name="fragment_video_player_label">Player</string>
+
+    <string name="item_export_words_title">Export words</string>
+    <string name="app_description">Watch and Learn</string>
 </resources>
