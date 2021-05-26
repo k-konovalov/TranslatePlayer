@@ -9,7 +9,7 @@
         android:id="@+id/videoPlayerFragment"
         android:name="ru.konovalovk.translateplayer.ui.player.VideoPlayerFragment"
         android:label="video_player_fragment"
-        tools:layout="@layout/video_player_fragment" />
+        tools:layout="@layout/fragment_video_player" />
     <fragment
         android:id="@+id/choiceDestinationFragment"
         android:name="ru.konovalovk.translateplayer.ui.export.ChoiceDestinationFragment"
