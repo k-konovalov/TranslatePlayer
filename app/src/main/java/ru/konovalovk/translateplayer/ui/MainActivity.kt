@@ -1,8 +1,12 @@
 package ru.konovalovk.translateplayer.ui
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.doOnLayout
 import androidx.core.view.forEach
 import androidx.drawerlayout.widget.DrawerLayout
@@ -33,6 +37,10 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setupNav()
         navigationView
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            // If permission is not granted, ask it.
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 2);
+        }
     }
 
     fun setupNav(){

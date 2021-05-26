@@ -1,5 +1,7 @@
 package ru.konovalovk.translateplayer.ui.player
 
+import android.content.ContentResolver
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
@@ -16,6 +18,8 @@ import org.videolan.libvlc.util.VLCVideoLayout
 import ru.konovalovk.interactor.TranslatorInteractor
 import ru.konovalovk.subtitle_parser.habib.SubtitleParser
 import ru.konovalovk.translateplayer.R
+import java.io.File
+import java.io.FileInputStream
 import java.io.IOException
 
 class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
@@ -60,12 +64,8 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
         super.onViewCreated(view, savedInstanceState)
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
 
-        val newFile = viewModel.fileFromAssets(requireContext(), "", "naruto.srt") ?: return
 
-        SubtitleParser.getInstance().run {
-            setSubtitleParserListener(viewModel.iSubtitleParserListener)
-            parseSubtitle(newFile.absolutePath, "ru", "")
-        }
+        parseSubtitle()
 
         viewModel.liveCurSubtitleContent.observe(viewLifecycleOwner, {
             tvSubtitle.text = it
@@ -134,7 +134,8 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
             setEventListener(viewModel.eventListener)
 
             try {
-                media = Media(mLibVLC, requireContext().assets.openFd("naruto.mkv"))
+                val uri = arguments?.getParcelable<Uri>(EXTRA_VIDEO_URI) ?: return
+                media = Media(mLibVLC, requireContext().contentResolver.openFileDescriptor(uri, "r")?.fileDescriptor ?: return)
                 media?.release()
 
             } catch (e: IOException) {
@@ -146,6 +147,29 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
                 Thread.sleep(100)
                 time = int?.toLong() ?: 0L
             }
+        }
+    }
+
+    fun parseSubtitle(){
+        val newFile = viewModel.fileFromAssets(requireContext(), "", "naruto.srt") ?: return
+
+        val subsUri = arguments?.getParcelable<Uri>(EXTRA_SUBTITLES_URI) ?: return
+        val fd = requireContext().contentResolver.openFileDescriptor(subsUri, "r", null)?.fileDescriptor
+
+       val brandNewFile =  File(requireContext().cacheDir.absolutePath + "/subsCache", "custom.sub").apply {
+            mkdirs()
+            if (exists()) delete()
+            createNewFile()
+            outputStream().use { os ->
+                FileInputStream(fd).use {
+                    fis -> fis.copyTo(os)
+                }
+            }
+        }
+
+        SubtitleParser.getInstance().run {
+            setSubtitleParserListener(viewModel.iSubtitleParserListener)
+            parseSubtitle(brandNewFile.absolutePath, "ru", "")
         }
     }
 }
