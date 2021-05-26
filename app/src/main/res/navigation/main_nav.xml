@@ -10,4 +10,32 @@
         android:name="ru.konovalovk.translateplayer.ui.player.VideoPlayerFragment"
         android:label="video_player_fragment"
         tools:layout="@layout/video_player_fragment" />
+    <fragment
+        android:id="@+id/choiceDestinationFragment"
+        android:name="ru.konovalovk.translateplayer.ui.export.ChoiceDestinationFragment"
+        android:label="ChoiceDestinationFragment" />
+    <fragment
+        android:id="@+id/statisticsFragment"
+        android:name="ru.konovalovk.translateplayer.ui.statistics.StatisticsFragment"
+        android:label="StatisticsFragment" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="ru.konovalovk.translateplayer.ui.settings.SettingsFragment"
+        android:label="SettingsFragment" />
+    <fragment
+        android:id="@+id/choiceWordsFragments"
+        android:name="ru.konovalovk.translateplayer.ui.export.ChoiceWordsFragments"
+        android:label="ChoiceWordsFragments" >
+        <action
+            android:id="@+id/action_choiceWordsFragments_to_choiceDestinationFragment"
+            app:destination="@id/choiceDestinationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/choiceMediaFragment"
+        android:name="ru.konovalovk.translateplayer.ui.player.ChoiceMediaFragment"
+        android:label="ChoiceMediaFragment" >
+        <action
+            android:id="@+id/action_choiceMediaFragment_to_videoPlayerFragment"
+            app:destination="@id/videoPlayerFragment" />
+    </fragment>
 </navigation>
