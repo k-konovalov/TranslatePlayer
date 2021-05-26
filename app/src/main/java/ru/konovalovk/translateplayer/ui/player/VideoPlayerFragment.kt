@@ -64,7 +64,6 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
         super.onViewCreated(view, savedInstanceState)
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
 
-
         parseSubtitle()
 
         viewModel.liveCurSubtitleContent.observe(viewLifecycleOwner, {
@@ -122,6 +121,11 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
         viewModel.state.postValue(VideoPlayerViewModel.State.Stopping)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        (requireActivity() as AppCompatActivity).supportActionBar?.show()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         mMediaPlayer.release()
@@ -151,8 +155,6 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
     }
 
     fun parseSubtitle(){
-        val newFile = viewModel.fileFromAssets(requireContext(), "", "naruto.srt") ?: return
-
         val subsUri = arguments?.getParcelable<Uri>(EXTRA_SUBTITLES_URI) ?: return
         val fd = requireContext().contentResolver.openFileDescriptor(subsUri, "r", null)?.fileDescriptor
 
