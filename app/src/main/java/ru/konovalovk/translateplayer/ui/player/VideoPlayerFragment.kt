@@ -72,8 +72,12 @@ class VideoPlayerFragment : Fragment(R.layout.video_player_fragment) {
             tvSubtitle.text = it
         })
         viewModel.currPlaybackTime.observe(viewLifecycleOwner,{
+            if (sbTime.max == 0) {
+                sbTime.max = mMediaPlayer.length.toInt()
+                sbTime.visibility = View.VISIBLE
+                //Todo: Animation here
+            }
             sbTime.progress = it
-            if (sbTime.max == 0) sbTime.max = mMediaPlayer.length.toInt()
             tvTime.text = viewModel.convertSecondsToHMmSs(it.toLong())
         })
         viewModel.translatorInteractor.translatedWord.observe(viewLifecycleOwner, {
