@@ -8,24 +8,28 @@
     <fragment
         android:id="@+id/videoPlayerFragment"
         android:name="ru.konovalovk.translateplayer.ui.player.VideoPlayerFragment"
-        android:label="video_player_fragment"
+        android:label="@string/fragment_video_player_label"
         tools:layout="@layout/fragment_video_player" />
     <fragment
         android:id="@+id/choiceDestinationFragment"
         android:name="ru.konovalovk.translateplayer.ui.export.ChoiceDestinationFragment"
-        android:label="ChoiceDestinationFragment" />
+        android:label="@string/fragment_choice_destination_label"
+        tools:layout="@layout/fragment_choice_destination"/>
     <fragment
         android:id="@+id/statisticsFragment"
         android:name="ru.konovalovk.translateplayer.ui.statistics.StatisticsFragment"
-        android:label="StatisticsFragment" />
+        android:label="@string/fragment_statistics_label"
+        tools:layout="@layout/fragment_statistics"/>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="ru.konovalovk.translateplayer.ui.settings.SettingsFragment"
-        android:label="SettingsFragment" />
+        android:label="@string/fragment_settings_label"
+        tools:layout="@layout/fragment_settings"/>
     <fragment
         android:id="@+id/choiceWordsFragments"
         android:name="ru.konovalovk.translateplayer.ui.export.ChoiceWordsFragments"
-        android:label="ChoiceWordsFragments" >
+        android:label="@string/fragment_choice_words_label"
+        tools:layout="@layout/fragment_choice_words">
         <action
             android:id="@+id/action_choiceWordsFragments_to_choiceDestinationFragment"
             app:destination="@id/choiceDestinationFragment" />
@@ -33,7 +37,8 @@
     <fragment
         android:id="@+id/choiceMediaFragment"
         android:name="ru.konovalovk.translateplayer.ui.player.ChoiceMediaFragment"
-        android:label="ChoiceMediaFragment" >
+        android:label="@string/fragment_choice_media_label"
+        tools:layout="@layout/fragment_choice_media">
         <action
             android:id="@+id/action_choiceMediaFragment_to_videoPlayerFragment"
             app:destination="@id/videoPlayerFragment" />

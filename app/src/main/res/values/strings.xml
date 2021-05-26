@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">TranslatePlayer</string>
+    <string name="fragment_settings_label">SettingsFragment</string>
+    <string name="fragment_choice_words_label">ChoiceWordsFragments</string>
+    <string name="fragment_choice_media_label">ChoiceMediaFragment</string>
+    <string name="fragment_choice_destination_label">ChoiceDestinationFragment</string>
+    <string name="fragment_statistics_label">StatisticsFragment</string>
+    <string name="fragment_video_player_label">video_player_fragment</string>
 </resources>
