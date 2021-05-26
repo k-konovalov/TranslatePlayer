@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.videolan.libvlc.MediaPlayer
+import ru.konovalovk.interactor.TranslatorInteractor
 import ru.konovalovk.repository.network.NetworkModule
 import ru.konovalovk.subtitle_parser.habib.SubtitleParser
 import ru.konovalovk.subtitle_parser.subs.TimedTextObject
@@ -25,6 +26,7 @@ import java.util.concurrent.TimeUnit
 class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {
     val TAG = this::class.java.simpleName
 
+    val translatorInteractor = TranslatorInteractor()
     val executor = Executors.newSingleThreadExecutor()
 
     private var subtitles: Array<Subtitle>? = null
@@ -81,8 +83,6 @@ class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {
         }
     }
 
-    val translatedWord = MutableLiveData<String>()
-
     fun fileFromAssets(context: Context, filepath: String, filename: String): File? {
         val directory = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: return null
         val out = File(directory.absolutePath, filename).apply {
@@ -104,38 +104,6 @@ class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {
             TimeUnit.MILLISECONDS.toHours(millis),
             TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)), // The change is in this line
             TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
-    }
-
-    fun translateWord(text: String){
-        viewModelScope.launch {
-            val result = NetworkModule.googleApi.getWordTranslation("en","ru", text.lowercase())
-            val str = result.string()
-            Log.e(TAG, str)
-        }
-
-    }
-
-    fun translatePhrase(text: String){
-        viewModelScope.launch {
-            val improvedText = text.lowercase().replace("\n", "")
-            val result = NetworkModule.googleApi.getPhraseTranslation("en", "ru", improvedText)
-            translatedWord.postValue(parseGoogleResult(result.string()))
-        }
-    }
-
-//ToDdo: to new class Translator /
-//Example - [[["интересно, где он сейчас ...","i wonder where he is right now...",null,null
-    fun parseGoogleResult(original: String): String {
-        val regex = Regex("\".+\"")
-        val founded = regex.find(original)
-        val searchedValue = founded?.value ?: "empty"
-        val splitted = searchedValue.split("\",\"")
-        if (splitted.isNotEmpty()) {
-            val res = splitted.first().let { it.substring(1, it.length) }
-            Log.i(TAG, "Translated res: $res")
-            return res//surroundings
-        }
-        return "Error: Empty translation result"
     }
 
     enum class State{

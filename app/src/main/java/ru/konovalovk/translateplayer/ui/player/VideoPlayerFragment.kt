@@ -13,6 +13,7 @@ import org.videolan.libvlc.LibVLC
 import org.videolan.libvlc.Media
 import org.videolan.libvlc.MediaPlayer
 import org.videolan.libvlc.util.VLCVideoLayout
+import ru.konovalovk.interactor.TranslatorInteractor
 import ru.konovalovk.subtitle_parser.habib.SubtitleParser
 import ru.konovalovk.translateplayer.R
 import java.io.IOException
@@ -30,7 +31,7 @@ class VideoPlayerFragment : Fragment(R.layout.video_player_fragment) {
 
     val tvSubtitle by lazy { requireView().findViewById<TextView>(R.id.tvSubtitles).apply {
         setOnClickListener {
-            viewModel.translatePhrase(text.toString())
+            viewModel.translatorInteractor.translatePhrase(text.toString(), TranslatorInteractor.Translator.Google)
             if (viewModel.state.value != VideoPlayerViewModel.State.Pausing) viewModel.state.postValue(VideoPlayerViewModel.State.Pausing)
         }
     } }
@@ -73,7 +74,7 @@ class VideoPlayerFragment : Fragment(R.layout.video_player_fragment) {
             if (sbTime.max == 0) sbTime.max = mMediaPlayer.length.toInt()
             tvTime.text = viewModel.convertSecondsToHMmSs(it.toLong())
         })
-        viewModel.translatedWord.observe(viewLifecycleOwner, { Toast.makeText(requireContext(), it ?: return@observe, Toast.LENGTH_LONG).show()})
+        viewModel.translatorInteractor.translatedWord.observe(viewLifecycleOwner, { Toast.makeText(requireContext(), it ?: return@observe, Toast.LENGTH_LONG).show()})
         viewModel.state.observe(viewLifecycleOwner, {
             if(viewModel.lastState == it) return@observe
             viewModel.lastState = it
