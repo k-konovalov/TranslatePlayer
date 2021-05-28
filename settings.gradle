@@ -2,3 +2,4 @@ rootProject.name = "TranslatePlayer"
 include ':app'
 include ':subtitle_parser'
 include ':repository'
+include ':domain'
