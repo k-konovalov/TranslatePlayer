@@ -1,4 +1,4 @@
-package ru.konovalovk.translateplayer.ui
+package ru.konovalovk.translateplayer.logic
 
 import java.util.concurrent.TimeUnit
 

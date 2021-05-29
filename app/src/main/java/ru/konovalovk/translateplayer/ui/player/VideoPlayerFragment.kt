@@ -1,7 +1,5 @@
 package ru.konovalovk.translateplayer.ui.player
 
-import android.content.ContentResolver
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -20,7 +18,7 @@ import org.videolan.libvlc.util.VLCVideoLayout
 import ru.konovalovk.interactor.TranslatorInteractor
 import ru.konovalovk.subtitle_parser.habib.SubtitleParser
 import ru.konovalovk.translateplayer.R
-import ru.konovalovk.translateplayer.ui.convertSecondsToHMmSs
+import ru.konovalovk.translateplayer.logic.convertSecondsToHMmSs
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException

@@ -1,11 +1,10 @@
 package ru.konovalovk.translateplayer.ui.statistics
 
 import android.os.Bundle
-import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import ru.konovalovk.translateplayer.R
-import ru.konovalovk.translateplayer.ui.convertSecondsToHMmSs
+import ru.konovalovk.translateplayer.logic.convertSecondsToHMmSs
 
 class StatisticsFragment: PreferenceFragmentCompat() {
     private val preferenceKeys = arrayOf(
