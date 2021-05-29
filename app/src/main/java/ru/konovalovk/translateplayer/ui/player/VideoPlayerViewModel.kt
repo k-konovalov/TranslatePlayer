@@ -12,11 +12,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.videolan.libvlc.MediaPlayer
+import ru.konovalovk.domain.models.Subtitle
 import ru.konovalovk.interactor.TranslatorInteractor
-import ru.konovalovk.repository.network.NetworkModule
 import ru.konovalovk.subtitle_parser.habib.SubtitleParser
-import ru.konovalovk.subtitle_parser.subs.TimedTextObject
-import ru.konovalovk.translateplayer.Subtitle
 import java.io.File
 import java.io.FileOutputStream
 import java.util.concurrent.Executors
