@@ -1,6 +1,7 @@
 package ru.konovalovk.translateplayer.ui.player
 
 import android.content.ContentResolver
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.preference.PreferenceManager
 import com.google.android.material.snackbar.Snackbar
 import org.videolan.libvlc.LibVLC
 import org.videolan.libvlc.Media
@@ -24,6 +26,7 @@ import java.io.IOException
 
 class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
     private val viewModel: VideoPlayerViewModel by viewModels()
+    private val sharedPreferences by lazy{ PreferenceManager.getDefaultSharedPreferences(requireActivity()) }
 
     private val vlcPlayer by lazy { requireView().findViewById<VLCVideoLayout>(R.id.vlcPlayer).apply {
         setOnClickListener {
@@ -79,6 +82,19 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
             tvTime.text = viewModel.convertSecondsToHMmSs(it.toLong())
         })
         viewModel.translatorInteractor.translatedWord.observe(viewLifecycleOwner, {
+            val originalWords = tvSubtitle.text
+                .replace("[.?!)(,:]".toRegex(),"") //delete non words symbols
+                .split(" ")
+            val translatedWords = it
+                .replace("[.?!)(,:]".toRegex(),"") //delete non words symbols
+                .split(" ")
+            val strKey = getString(R.string.statistics_words_total_key)
+            val strDefault = getString(R.string.statistics_words_total_default_value)
+            val currValue = sharedPreferences.getString(strKey, strDefault)?.toInt() ?: 0
+            val newValue = currValue + originalWords.size
+
+            sharedPreferences.edit().putString(strKey, newValue.toString()).apply()
+
             snackBar = Snackbar.make(requireView(), it ?: return@observe, Snackbar.LENGTH_LONG)
             snackBar?.show()
         })
