@@ -1,4 +1,4 @@
-package ru.konovalovk.translateplayer
+package ru.konovalovk.domain.models
 
 data class Subtitle(
     val startTime: Int,
