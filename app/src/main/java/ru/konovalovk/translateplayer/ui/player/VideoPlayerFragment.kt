@@ -146,6 +146,7 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
         super.onDestroy()
         mMediaPlayer.release()
         mLibVLC.release()
+        updateMediaStats()
     }
 
     private fun launchVideo(int: Int? = 0) {
@@ -189,5 +190,14 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
             setSubtitleParserListener(viewModel.iSubtitleParserListener)
             parseSubtitle(brandNewFile.absolutePath, "ru", "")
         }
+    }
+
+    private fun updateMediaStats(){
+        val strKey = getString(R.string.statistics_media_total_key)
+        val strDefault = getString(R.string.statistics_media_total_default_value)
+        val currValue = sharedPreferences.getString(strKey, strDefault)?.toInt() ?: 0
+        val newValue = currValue + 1
+
+        sharedPreferences.edit().putString(strKey, newValue.toString()).apply()
     }
 }

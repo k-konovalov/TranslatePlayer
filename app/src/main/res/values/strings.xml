@@ -23,8 +23,8 @@
     <string name="statistics_words_exported_default_value">0</string>
 
     <string name="statistics_media_title">Media</string>
-    <string name="statistics_media_total_title">Watched</string>
-    <string name="statistics_media_total_summary">You watched %s media</string>
+    <string name="statistics_media_total_title">Opened</string>
+    <string name="statistics_media_total_summary">You opened %s media</string>
     <string name="statistics_media_total_key">statistics_media_total_key</string>
     <string name="statistics_media_total_default_value">0</string>
     <string name="statistics_media_time_title">Time spent</string>
