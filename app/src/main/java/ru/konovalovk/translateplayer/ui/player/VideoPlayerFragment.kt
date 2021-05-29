@@ -3,11 +3,16 @@ package ru.konovalovk.translateplayer.ui.player
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.doOnLayout
+import androidx.core.view.marginBottom
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.preference.PreferenceManager
@@ -15,6 +20,8 @@ import com.google.android.material.snackbar.Snackbar
 import org.videolan.libvlc.LibVLC
 import org.videolan.libvlc.Media
 import org.videolan.libvlc.MediaPlayer
+import org.videolan.libvlc.MediaPlayer.Position.Bottom
+import org.videolan.libvlc.MediaPlayer.Position.Top
 import org.videolan.libvlc.util.VLCVideoLayout
 import ru.konovalovk.interactor.TranslatorInteractor
 import ru.konovalovk.subtitle_parser.habib.SubtitleParser
@@ -24,10 +31,13 @@ import ru.konovalovk.translateplayer.logic.transparentMap
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
+import java.lang.Exception
 
 class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
     private val viewModel: VideoPlayerViewModel by viewModels()
     private val sharedPreferences by lazy{ PreferenceManager.getDefaultSharedPreferences(requireActivity()) }
+
+    private val clPlayer by lazy { requireView().findViewById<ConstraintLayout>(R.id.clPlayer) }
 
     private val vlcPlayer by lazy { requireView().findViewById<VLCVideoLayout>(R.id.vlcPlayer).apply {
         setOnClickListener {
@@ -44,7 +54,17 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
             if (viewModel.state.value != VideoPlayerViewModel.State.Pausing) viewModel.state.postValue(VideoPlayerViewModel.State.Pausing)
         }
         val transparencyValue = sharedPreferences.getInt(getString(R.string.settings_subtitles_transparency_key), getString(R.string.settings_subtitles_transparency_default_value).toInt())
-        setBackgroundColor(Color.parseColor("${transparentMap[transparencyValue]}000000"))
+        val alpha = transparentMap[transparencyValue]
+        setBackgroundColor(Color.parseColor("#${alpha}000000"))
+        val constraintSet = ConstraintSet().apply{ clone(clPlayer) }
+        val bottom =
+            sharedPreferences.getString(
+                getString(R.string.settings_subtitles_bottom_margin_key),
+                getString(R.string.settings_subtitles_bottom_margin_default_value)
+            )?.toInt() ?: 0
+        constraintSet.connect(R.id.tvSubtitles, ConstraintSet.BOTTOM, R.id.sbTime, ConstraintSet.TOP, bottom)
+        Log.e("TAG", bottom.toString())
+        constraintSet.applyTo(clPlayer)
     } }
     val tvTime by lazy { requireView().findViewById<TextView>(R.id.tvTime)}
     val sbTime by lazy { requireView().findViewById<SeekBar>(R.id.sbTime).apply {
@@ -73,6 +93,7 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
         parseSubtitle()
 
         viewModel.liveCurSubtitleContent.observe(viewLifecycleOwner, {
+            tvSubtitle.visibility = if (it.isEmpty()) View.INVISIBLE else View.VISIBLE
             tvSubtitle.text = it
         })
         viewModel.currPlaybackTime.observe(viewLifecycleOwner,{
