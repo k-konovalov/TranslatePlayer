@@ -1,27 +1,22 @@
 package ru.konovalovk.translateplayer.ui.player
 
 import android.content.Context
-import android.media.MediaMetadataRetriever
 import android.os.Build
-import android.os.CountDownTimer
 import android.os.Environment
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import org.videolan.libvlc.MediaPlayer
 import ru.konovalovk.domain.models.Subtitle
 import ru.konovalovk.interactor.TranslatorInteractor
 import ru.konovalovk.subtitle_parser.habib.SubtitleParser
-import ru.konovalovk.translateplayer.ui.PlayTimer
+import ru.konovalovk.translateplayer.logic.PlayTimer
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
 import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 
 
 class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {

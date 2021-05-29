@@ -12,9 +12,11 @@ import androidx.core.view.forEach
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentContainerView
 import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.navigation.NavigationView
 import ru.konovalovk.translateplayer.R
 
@@ -43,12 +45,10 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         }
     }
 
-    fun setupNav(){
+    private fun setupNav(){
         findViewById<FragmentContainerView>(R.id.flMain).doOnLayout {
-            //val appBarConfiguration = AppBarConfiguration(navController.graph, findViewById<DrawerLayout>(R.id.drawer_layout))
-            //setupActionBarWithNavController(navController, appBarConfiguration)
             navigationView.setupWithNavController(navController)
-            NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout);
+            findViewById<MaterialToolbar>(R.id.mtbMain).setupWithNavController(navController, findViewById<DrawerLayout>(R.id.drawer_layout))
         }
     }
 

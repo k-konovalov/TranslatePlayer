@@ -1,33 +1,44 @@
 package ru.konovalovk.translateplayer.ui.player
 
-import android.content.ContentResolver
-import android.content.Context
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.doOnLayout
+import androidx.core.view.marginBottom
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.preference.PreferenceManager
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
 import org.videolan.libvlc.LibVLC
 import org.videolan.libvlc.Media
 import org.videolan.libvlc.MediaPlayer
+import org.videolan.libvlc.MediaPlayer.Position.Bottom
+import org.videolan.libvlc.MediaPlayer.Position.Top
 import org.videolan.libvlc.util.VLCVideoLayout
 import ru.konovalovk.interactor.TranslatorInteractor
 import ru.konovalovk.subtitle_parser.habib.SubtitleParser
 import ru.konovalovk.translateplayer.R
-import ru.konovalovk.translateplayer.ui.convertSecondsToHMmSs
+import ru.konovalovk.translateplayer.logic.convertSecondsToHMmSs
+import ru.konovalovk.translateplayer.logic.transparentMap
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
+import java.lang.Exception
 
 class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
     private val viewModel: VideoPlayerViewModel by viewModels()
     private val sharedPreferences by lazy{ PreferenceManager.getDefaultSharedPreferences(requireActivity()) }
+
+    private val clPlayer by lazy { requireView().findViewById<ConstraintLayout>(R.id.clPlayer) }
 
     private val vlcPlayer by lazy { requireView().findViewById<VLCVideoLayout>(R.id.vlcPlayer).apply {
         setOnClickListener {
@@ -43,6 +54,18 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
             viewModel.translatorInteractor.translatePhrase(text.toString(), TranslatorInteractor.Translator.Google)
             if (viewModel.state.value != VideoPlayerViewModel.State.Pausing) viewModel.state.postValue(VideoPlayerViewModel.State.Pausing)
         }
+        val transparencyValue = sharedPreferences.getInt(getString(R.string.settings_subtitles_transparency_key), getString(R.string.settings_subtitles_transparency_default_value).toInt())
+        val alpha = transparentMap[transparencyValue]
+        setBackgroundColor(Color.parseColor("#${alpha}000000"))
+        val constraintSet = ConstraintSet().apply{ clone(clPlayer) }
+        val bottom =
+            sharedPreferences.getString(
+                getString(R.string.settings_subtitles_bottom_margin_key),
+                getString(R.string.settings_subtitles_bottom_margin_default_value)
+            )?.toInt() ?: 0
+        constraintSet.connect(R.id.tvSubtitles, ConstraintSet.BOTTOM, R.id.sbTime, ConstraintSet.TOP, bottom)
+        Log.e("TAG", bottom.toString())
+        constraintSet.applyTo(clPlayer)
     } }
     val tvTime by lazy { requireView().findViewById<TextView>(R.id.tvTime)}
     val sbTime by lazy { requireView().findViewById<SeekBar>(R.id.sbTime).apply {
@@ -66,11 +89,12 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+        requireActivity().findViewById<MaterialToolbar>(R.id.mtbMain).visibility = View.GONE
 
         parseSubtitle()
 
         viewModel.liveCurSubtitleContent.observe(viewLifecycleOwner, {
+            tvSubtitle.visibility = if (it.isEmpty()) View.INVISIBLE else View.VISIBLE
             tvSubtitle.text = it
         })
         viewModel.currPlaybackTime.observe(viewLifecycleOwner,{
@@ -119,7 +143,6 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
                     viewModel.playTimer.pause()
                 }
                 VideoPlayerViewModel.State.Stopping -> {
-                    (requireActivity() as AppCompatActivity).supportActionBar?.show()
                     mMediaPlayer.stop()
                     mMediaPlayer.detachViews()
                     viewModel.savedState.set(viewModel.EXTRA_CURR_TIME, viewModel.currPlaybackTime.value)
@@ -149,7 +172,7 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        (requireActivity() as AppCompatActivity).supportActionBar?.show()
+        requireActivity().findViewById<MaterialToolbar>(R.id.mtbMain).visibility = View.VISIBLE
     }
 
     override fun onDestroy() {

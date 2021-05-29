@@ -1,7 +1,6 @@
-package ru.konovalovk.translateplayer.ui
+package ru.konovalovk.translateplayer.logic
 
 import android.os.CountDownTimer
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 
 class PlayTimer {
