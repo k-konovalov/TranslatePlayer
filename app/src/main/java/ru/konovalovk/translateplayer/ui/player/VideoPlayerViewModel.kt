@@ -3,6 +3,7 @@ package ru.konovalovk.translateplayer.ui.player
 import android.content.Context
 import android.media.MediaMetadataRetriever
 import android.os.Build
+import android.os.CountDownTimer
 import android.os.Environment
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -12,13 +13,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.videolan.libvlc.MediaPlayer
+import ru.konovalovk.domain.models.Subtitle
 import ru.konovalovk.interactor.TranslatorInteractor
-import ru.konovalovk.repository.network.NetworkModule
 import ru.konovalovk.subtitle_parser.habib.SubtitleParser
-import ru.konovalovk.subtitle_parser.subs.TimedTextObject
-import ru.konovalovk.translateplayer.Subtitle
+import ru.konovalovk.translateplayer.ui.PlayTimer
 import java.io.File
 import java.io.FileOutputStream
+import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
@@ -76,6 +77,8 @@ class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {
             } else Log.e(TAG, "Not success")
         }
 
+    val playTimer = PlayTimer()
+
     fun fileFromAssets(context: Context, filepath: String, filename: String): File? {
         val directory = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: return null
         val out = File(directory.absolutePath, filename).apply {
@@ -90,13 +93,6 @@ class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {
             }
         }
         return out
-    }
-
-    fun convertSecondsToHMmSs(millis: Long): String {
-        return String.format("%02d:%02d:%02d",
-            TimeUnit.MILLISECONDS.toHours(millis),
-            TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)), // The change is in this line
-            TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
     }
 
     enum class State{

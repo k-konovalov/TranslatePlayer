@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory
+        android:title="@string/statistics_words_title"
+        app:iconSpaceReserved="false">
+        <Preference
+            android:defaultValue="@string/statistics_words_total_default_value"
+            android:key="@string/statistics_words_total_key"
+            android:title="@string/statistics_words_total_title"
+            app:iconSpaceReserved="false" />
+        <Preference
+            android:defaultValue="@string/statistics_words_exported_default_value"
+            android:key="@string/statistics_words_exported_key"
+            android:title="@string/statistics_words_exported_title"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/statistics_media_title"
+        app:iconSpaceReserved="false">
+        <Preference
+            android:defaultValue="@string/statistics_media_total_default_value"
+            android:key="@string/statistics_media_total_key"
+            android:title="@string/statistics_media_total_title"
+            app:iconSpaceReserved="false" />
+        <Preference
+            android:defaultValue="@string/statistics_media_time_default_value"
+            android:key="@string/statistics_media_time_key"
+            android:title="@string/statistics_media_time_title"
+            app:iconSpaceReserved="false" />
+    </PreferenceCategory>
+</PreferenceScreen>

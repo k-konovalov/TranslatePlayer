@@ -10,4 +10,26 @@
 
     <string name="item_export_words_title">Export words</string>
     <string name="app_description">Watch and Learn</string>
+
+    <!-- Statistics -->
+    <string name="statistics_words_title">Words</string>
+    <string name="statistics_words_total_title">Translated</string>
+    <string name="statistics_words_total_summary">%s words were translated</string>
+    <string name="statistics_words_total_key">statistics_words_total_key</string>
+    <string name="statistics_words_total_default_value">0</string>
+    <string name="statistics_words_exported_title">Exported</string>
+    <string name="statistics_words_exported_summary">%s words were exported</string>
+    <string name="statistics_words_exported_key">statistics_words_exported_key</string>
+    <string name="statistics_words_exported_default_value">0</string>
+
+    <string name="statistics_media_title">Media</string>
+    <string name="statistics_media_total_title">Opened</string>
+    <string name="statistics_media_total_summary">You opened %s media</string>
+    <string name="statistics_media_total_key">statistics_media_total_key</string>
+    <string name="statistics_media_total_default_value">0</string>
+    <string name="statistics_media_time_title">Time spent</string>
+    <string name="statistics_media_time_summary">You spent %s for learning</string>
+    <string name="statistics_media_time_key">statistics_media_time_key</string>
+    <string name="statistics_media_time_default_value">0</string>
+
 </resources>
