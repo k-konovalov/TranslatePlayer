@@ -5,6 +5,7 @@ import androidx.preference.EditTextPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import ru.konovalovk.translateplayer.R
+import ru.konovalovk.translateplayer.ui.convertSecondsToHMmSs
 
 class StatisticsFragment: PreferenceFragmentCompat() {
     private val preferenceKeys = arrayOf(
@@ -22,15 +23,16 @@ class StatisticsFragment: PreferenceFragmentCompat() {
         preferenceKeys.forEach { pref ->
             val strPref = pref.toPrefKeysAsString()
             (findPreference(strPref.key) as? Preference)?.run {
-                val currentVal = sharedPreferences.getString(strPref.key, strPref.defaultVal)
-                summary = String.format(strPref.summaryTemplate, currentVal)
-                onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
-                        sharedPreferences.edit().putString(preference.key, newValue.toString()).apply()
-                        summary = String.format(strPref.summaryTemplate, newValue.toString())
-                        true
-                    }
+                val currentVal = sharedPreferences.getString(strPref.key, strPref.defaultVal)  ?: ""
+                summary = formatSummary(strPref, currentVal)
             }
         }
+    }
+
+    private fun formatSummary(pref: PrefKeysAsString, settedVal: String): String{
+        val isPrefContainsTime = pref.key == getString(R.string.statistics_media_time_key)
+        return if (isPrefContainsTime) convertSecondsToHMmSs(settedVal.toLong())
+        else String.format(pref.summaryTemplate, settedVal)
     }
 
     inner class PrefKeys(

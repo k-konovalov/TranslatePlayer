@@ -20,6 +20,7 @@ import org.videolan.libvlc.util.VLCVideoLayout
 import ru.konovalovk.interactor.TranslatorInteractor
 import ru.konovalovk.subtitle_parser.habib.SubtitleParser
 import ru.konovalovk.translateplayer.R
+import ru.konovalovk.translateplayer.ui.convertSecondsToHMmSs
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
@@ -47,7 +48,7 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
     val sbTime by lazy { requireView().findViewById<SeekBar>(R.id.sbTime).apply {
         setOnSeekBarChangeListener(object:SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (viewModel.state.value == VideoPlayerViewModel.State.Pausing) tvTime.text = viewModel.convertSecondsToHMmSs(progress.toLong())
+                if (viewModel.state.value == VideoPlayerViewModel.State.Pausing) tvTime.text = convertSecondsToHMmSs(progress.toLong())
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -57,7 +58,7 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 val currTime = seekBar?.progress?.toLong() ?: return
                 mMediaPlayer.time = currTime
-                tvTime.text = viewModel.convertSecondsToHMmSs(currTime)
+                tvTime.text = convertSecondsToHMmSs(currTime)
             }
         })
     }}
@@ -79,7 +80,7 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
                 //Todo: Animation here
             }
             sbTime.progress = it
-            tvTime.text = viewModel.convertSecondsToHMmSs(it.toLong())
+            tvTime.text = convertSecondsToHMmSs(it.toLong())
         })
         viewModel.translatorInteractor.translatedWord.observe(viewLifecycleOwner, {
             val originalWords = tvSubtitle.text
@@ -111,9 +112,11 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
                 VideoPlayerViewModel.State.Playing -> {
                     snackBar?.dismiss()
                     mMediaPlayer.play()
+                    viewModel.playTimer.start()
                 }
                 VideoPlayerViewModel.State.Pausing -> {
                     mMediaPlayer.pause()
+                    viewModel.playTimer.pause()
                 }
                 VideoPlayerViewModel.State.Stopping -> {
                     (requireActivity() as AppCompatActivity).supportActionBar?.show()
@@ -122,6 +125,13 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
                     viewModel.savedState.set(viewModel.EXTRA_CURR_TIME, viewModel.currPlaybackTime.value)
                 }
             }
+        })
+        viewModel.playTimer.time.observe(viewLifecycleOwner,{
+            val strKey = getString(R.string.statistics_media_time_key)
+            val strDefault = getString(R.string.statistics_media_time_default_value)
+            val currValue = sharedPreferences.getString(strKey, strDefault)?.toLong() ?: 0L
+            val newValue = currValue + it.value
+            sharedPreferences.edit().putString(strKey, newValue.toString()).apply()
         })
     }
 
@@ -147,6 +157,7 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
         mMediaPlayer.release()
         mLibVLC.release()
         updateMediaStats()
+        viewModel.playTimer.stop()
     }
 
     private fun launchVideo(int: Int? = 0) {
