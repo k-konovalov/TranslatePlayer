@@ -1,115 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tfVideo"
-        style="@style/CustomMaterialEditText"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Video"
-        app:layout_constraintBottom_toTopOf="@+id/tfAudio"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed">
+        android:layout_gravity="center">
 
-        <com.google.android.material.textfield.TextInputEditText
-            style="@style/CustomMaterialEditText.Children"
-            android:id="@+id/tieVideo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/mbPlusVideo"
-        android:layout_width="50dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="8dp"
-        android:padding="0dp"
-        android:text="+"
-        app:layout_constraintBottom_toBottomOf="@+id/tfVideo"
-        app:layout_constraintEnd_toEndOf="@+id/tfVideo"
-        app:layout_constraintTop_toTopOf="@+id/tfVideo" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tfAudio"
-        style="@style/CustomMaterialEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Audio"
-        app:layout_constraintBottom_toTopOf="@+id/tfSubtitles"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tfVideo">
-
-        <com.google.android.material.textfield.TextInputEditText
-            style="@style/CustomMaterialEditText.Children"
-            android:id="@+id/tieAudio"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tfVideo"
+            style="@style/CustomMaterialEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="In progress"
-            />
+            android:hint="Video"
+            app:layout_constraintBottom_toTopOf="@+id/tfAudio"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tieVideo"
+                style="@style/CustomMaterialEditText.Children"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/mbPlusAudio"
-        android:layout_width="50dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="8dp"
-        android:enabled="false"
-        android:text="+"
-        app:layout_constraintBottom_toBottomOf="@+id/tfAudio"
-        app:layout_constraintEnd_toEndOf="@+id/tfSubtitles"
-        app:layout_constraintTop_toTopOf="@+id/tfAudio" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tfSubtitles"
-        style="@style/CustomMaterialEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="Subtitles"
-        app:layout_constraintBottom_toTopOf="@+id/mbNext"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tfAudio">
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/mbPlusVideo"
+            android:layout_width="50dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:padding="0dp"
+            android:text="+"
+            app:layout_constraintBottom_toBottomOf="@+id/tfVideo"
+            app:layout_constraintEnd_toEndOf="@+id/tfVideo"
+            app:layout_constraintTop_toTopOf="@+id/tfVideo" />
 
-        <com.google.android.material.textfield.TextInputEditText
-            style="@style/CustomMaterialEditText.Children"
-            android:id="@+id/tieSubtitles"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tfAudio"
+            style="@style/CustomMaterialEditText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:hint="Audio"
+            app:layout_constraintBottom_toTopOf="@+id/tfSubtitles"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tfVideo">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tieAudio"
+                style="@style/CustomMaterialEditText.Children"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="In progress" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/mbPlusSubtitles"
-        android:layout_width="50dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="8dp"
-        android:text="+"
-        app:layout_constraintBottom_toBottomOf="@+id/tfSubtitles"
-        app:layout_constraintEnd_toEndOf="@+id/tfSubtitles"
-        app:layout_constraintTop_toTopOf="@+id/tfSubtitles" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/mbNext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:text="NEXT"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tfSubtitles" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/mbPlusAudio"
+            android:layout_width="50dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:enabled="false"
+            android:text="+"
+            app:layout_constraintBottom_toBottomOf="@+id/tfAudio"
+            app:layout_constraintEnd_toEndOf="@+id/tfSubtitles"
+            app:layout_constraintTop_toTopOf="@+id/tfAudio" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tfSubtitles"
+            style="@style/CustomMaterialEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Subtitles"
+            app:layout_constraintBottom_toTopOf="@+id/mbNext"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tfAudio">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tieSubtitles"
+                style="@style/CustomMaterialEditText.Children"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/mbPlusSubtitles"
+            android:layout_width="50dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:text="+"
+            app:layout_constraintBottom_toBottomOf="@+id/tfSubtitles"
+            app:layout_constraintEnd_toEndOf="@+id/tfSubtitles"
+            app:layout_constraintTop_toTopOf="@+id/tfSubtitles" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/mbNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NEXT"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tfSubtitles" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
