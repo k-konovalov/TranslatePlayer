@@ -59,7 +59,7 @@ abstract class BasePreferenceFragment: PreferenceFragmentCompat() {
         preferenceKeys.forEach { pref ->
             val strPref = pref.toPrefKeysAsString()
             (findPreference(strPref.key) as? EditTextPreference)?.setOnBindEditTextListener { editText ->
-                    editText.inputType = InputType.TY
+                    editText.inputType = InputType.TYPE_CLASS_NUMBER
                 }
             }
     }
