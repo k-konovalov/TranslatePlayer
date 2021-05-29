@@ -31,5 +31,25 @@
     <string name="statistics_media_time_summary">You spent %s for learning</string>
     <string name="statistics_media_time_key">statistics_media_time_key</string>
     <string name="statistics_media_time_default_value">0</string>
+    <!-- Settings -->
+    <string name="settings_subtitles_title">Subtitles</string>
+    <string name="settings_subtitles_transparency_title">Background transparency</string>
+    <string name="settings_subtitles_transparency_summary">%s of transparency</string>
+    <string name="settings_subtitles_transparency_key">settings_subtitles_transparency_key</string>
+    <string name="settings_subtitles_transparency_default_value">0</string>
+    <string name="settings_subtitles_bottom_margin_title">Bottom margin</string>
+    <string name="settings_subtitles_bottom_margin_summary">%s pt</string>
+    <string name="settings_subtitles_bottom_margin_key">settings_subtitles_bottom_margin_key</string>
+    <string name="settings_subtitles_bottom_margin_default_value">0</string>
+
+    <string name="settings_media_title">Media</string>
+    <string name="settings_media_pause_title">Pause if hovered</string>
+    <string name="settings_media_pause_summary">%s</string>
+    <string name="settings_media_pause_key">settings_media_pause_key</string>
+    <string name="settings_media_pause_default_value">0</string>
+    <string name="settings_media_audio_shift_title">Audio shift</string>
+    <string name="settings_media_audio_shift_summary">%s second</string>
+    <string name="settings_media_audio_shift_key">settings_media_audio_shift_key</string>
+    <string name="settings_media_audio_shift_default_value">0</string>
 
 </resources>
