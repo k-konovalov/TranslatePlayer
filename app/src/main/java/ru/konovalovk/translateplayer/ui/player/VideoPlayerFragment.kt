@@ -16,6 +16,7 @@ import androidx.core.view.marginBottom
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.preference.PreferenceManager
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
 import org.videolan.libvlc.LibVLC
 import org.videolan.libvlc.Media
@@ -88,7 +89,7 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+        requireActivity().findViewById<MaterialToolbar>(R.id.mtbMain).visibility = View.GONE
 
         parseSubtitle()
 
@@ -142,7 +143,6 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
                     viewModel.playTimer.pause()
                 }
                 VideoPlayerViewModel.State.Stopping -> {
-                    (requireActivity() as AppCompatActivity).supportActionBar?.show()
                     mMediaPlayer.stop()
                     mMediaPlayer.detachViews()
                     viewModel.savedState.set(viewModel.EXTRA_CURR_TIME, viewModel.currPlaybackTime.value)
@@ -172,7 +172,7 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        (requireActivity() as AppCompatActivity).supportActionBar?.show()
+        requireActivity().findViewById<MaterialToolbar>(R.id.mtbMain).visibility = View.VISIBLE
     }
 
     override fun onDestroy() {
