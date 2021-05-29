@@ -1,5 +1,6 @@
 package ru.konovalovk.translateplayer.ui.player
 
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -19,6 +20,7 @@ import ru.konovalovk.interactor.TranslatorInteractor
 import ru.konovalovk.subtitle_parser.habib.SubtitleParser
 import ru.konovalovk.translateplayer.R
 import ru.konovalovk.translateplayer.logic.convertSecondsToHMmSs
+import ru.konovalovk.translateplayer.logic.transparentMap
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
@@ -41,6 +43,8 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
             viewModel.translatorInteractor.translatePhrase(text.toString(), TranslatorInteractor.Translator.Google)
             if (viewModel.state.value != VideoPlayerViewModel.State.Pausing) viewModel.state.postValue(VideoPlayerViewModel.State.Pausing)
         }
+        val transparencyValue = sharedPreferences.getInt(getString(R.string.settings_subtitles_transparency_key), getString(R.string.settings_subtitles_transparency_default_value).toInt())
+        setBackgroundColor(Color.parseColor("${transparentMap[transparencyValue]}000000"))
     } }
     val tvTime by lazy { requireView().findViewById<TextView>(R.id.tvTime)}
     val sbTime by lazy { requireView().findViewById<SeekBar>(R.id.sbTime).apply {
