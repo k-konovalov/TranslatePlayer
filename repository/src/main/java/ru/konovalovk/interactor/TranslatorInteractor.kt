@@ -1,17 +1,26 @@
 package ru.konovalovk.interactor
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
+import ru.konovalovk.repository.db.AppDatabase
 import ru.konovalovk.repository.network.NetworkModule
 
 class TranslatorInteractor {
     private val TAG = this::class.java.simpleName
     private val ioScope = CoroutineScope(Dispatchers.IO)
     val translatedWord = MutableLiveData<String>()
+
+    lateinit var db: AppDatabase
+
+    fun init(context: Context){
+        AppDatabase.initDb(context)
+        db = AppDatabase.instance ?: return
+    }
 
     fun translateWord(text: String) {
         ioScope.launch {
