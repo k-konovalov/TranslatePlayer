@@ -14,6 +14,8 @@ import kotlinx.coroutines.launch
 import org.videolan.libvlc.MediaPlayer
 import ru.konovalovk.domain.models.Subtitle
 import ru.konovalovk.interactor.TranslatorInteractor
+import ru.konovalovk.repository.db.AppDatabase
+import ru.konovalovk.repository.db.entity.Library
 import ru.konovalovk.repository.db.entity.Media
 import ru.konovalovk.subtitle_parser.habib.SubtitleParser
 import ru.konovalovk.translateplayer.R
@@ -116,12 +118,35 @@ class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {
 
     fun saveGlobalChrono(sharedPreferences: SharedPreferences, getString: (Int)-> String){
         viewModelScope.launch {
-            val curMedia = MyApp.db.mediaDAO.getMediaByName(filename) ?: return
+            val curMedia = MyApp.db.mediaDAO.getMediaByName(filename) ?: return@launch
             val strKey = getString(R.string.statistics_media_time_key)
             val strDefault = getString(R.string.statistics_media_time_default_value)
             val currValue = sharedPreferences.getString(strKey, strDefault)?.toLong() ?: 0L
             val newValue = currValue + (curMedia.duration ?: 0)
             sharedPreferences.edit().putString(strKey, newValue.toString()).apply()
+        }
+    }
+
+    fun savePhraseToDb(
+        originalText: String,
+        translatedText: String,
+        originalLanguage: String,
+        translatedLanguage: String
+    ) {
+        val oldWord = AppDatabase.instance?.libraryDAO?.getWordByOriginal(originalText)
+        oldWord?.run {
+            val newWord = Library(id, userId, languageOriginalId, languageTranslationId,serviceId, mediaId, originalWord, translatedWord, translationFrequency + 1, transcription, variants)
+            AppDatabase.instance?.libraryDAO?.update(newWord)
+        } ?: run {
+            val originalLanguageId = AppDatabase.instance?.languageDAO?.getAll()
+                ?.first { it.language == originalLanguage }?.id ?: return
+            val translatedLanguageId = AppDatabase.instance?.languageDAO?.getAll()
+                ?.first { it.language == translatedLanguage }?.id ?: return
+            val serviceId = AppDatabase.instance?.servicesDAO?.getAll()
+                ?.first { it.name == "test" }?.id ?: return
+            val userId = AppDatabase.instance?.usersDAO?.getAll()?.first()?.id ?: return
+            val newWord = Library(0,userId,originalLanguageId,translatedLanguageId,serviceId,0, originalText, translatedText, 1,null,null)
+            AppDatabase.instance?.libraryDAO?.insert(newWord)
         }
     }
 

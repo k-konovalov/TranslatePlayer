@@ -14,7 +14,7 @@ foreignKeys = [
     ForeignKey(entity = Media::class, parentColumns = arrayOf("id"), childColumns = arrayOf("mediaId"))]
 )
 data class Library (
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     val id: Int,
     val userId: Int,
     val languageOriginalId: Int,
@@ -25,4 +25,4 @@ data class Library (
     val translatedWord: String,
     val translationFrequency: Int,
     val transcription: String?,
-    val variants: String)
+    val variants: String?)

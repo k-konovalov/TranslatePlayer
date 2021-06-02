@@ -7,7 +7,7 @@ import ru.konovalovk.repository.db.entity.Services
 @Dao
 interface ServicesDAO {
     @Query("SELECT * FROM SERVICES")
-    fun getAll(): List<Media>
+    fun getAll(): List<Services>
 
     @Query("SELECT * FROM SERVICES where id=:serviceId")
     fun getServicesById(serviceId: Int): List<Services>

@@ -11,9 +11,15 @@ interface LibraryDAO {
     @Query("SELECT * FROM LIBRARY where id=:libraryId")
     fun getWordsById(libraryId: String): List<Library>
 
+    @Query("SELECT * FROM LIBRARY where originalWord=:originalWord")
+    fun getWordByOriginal(originalWord: String): Library
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     @PrimaryKey(autoGenerate = true)
     fun insert(actors: List<Library>)
+
+    @Update
+    fun update(library: Library)
 
     @Insert
     @PrimaryKey(autoGenerate = true)

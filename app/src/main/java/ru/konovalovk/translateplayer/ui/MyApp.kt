@@ -18,12 +18,15 @@ class MyApp: Application() {
 
     override fun onCreate() {
         db = AppDatabase.getDb(this)
-        fillDb()
+        //fillDb()
         super.onCreate()
     }
 
     fun fillDb(){
         ioScope.launch {
+            db.usersDAO.delete()
+            db.languageDAO.delete()
+            db.servicesDAO.delete()
             db.usersDAO.insert(Users(uuid = UUID.randomUUID().toString()))
             db.languageDAO.insert(listOf(Language(language = "en"),Language(language = "ru")))
             db.servicesDAO.insert(Services(0, apiKey = "", name = "test", idUser = db.usersDAO.getAll()[0].id))

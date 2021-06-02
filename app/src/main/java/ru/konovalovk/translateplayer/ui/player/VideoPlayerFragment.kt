@@ -101,10 +101,10 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
             tvTime.text = convertSecondsToHMmSs(it.toLong())
         })
         viewModel.translatorInteractor.translatedWord.observe(viewLifecycleOwner, {
-            val originalWords = tvSubtitle.text
+            val originalWords = tvSubtitle.text.toString().lowercase()
                 .replace("[.?!)(,:]".toRegex(),"") //delete non words symbols
                 .split(" ")
-            val translatedWords = it
+            val translatedWords = it.lowercase()
                 .replace("[.?!)(,:]".toRegex(),"") //delete non words symbols
                 .split(" ")
             val strKey = getString(R.string.statistics_words_total_key)
@@ -112,6 +112,7 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
             val currValue = sharedPreferences.getString(strKey, strDefault)?.toInt() ?: 0
             val newValue = currValue + originalWords.size
 
+            viewModel.savePhraseToDb(tvSubtitle.text.toString(), it,"en","ru")
             sharedPreferences.edit().putString(strKey, newValue.toString()).apply()
 
             snackBar = Snackbar.make(requireView(), it ?: return@observe, Snackbar.LENGTH_LONG)

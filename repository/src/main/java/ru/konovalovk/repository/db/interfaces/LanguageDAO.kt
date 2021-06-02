@@ -12,7 +12,6 @@ interface LanguageDAO {
     fun getLanguageById(languageId: Int): List<Language>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    @PrimaryKey(autoGenerate = true)
     fun insert(languages: List<Language>)
 
     @Insert
