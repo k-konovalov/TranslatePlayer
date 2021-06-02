@@ -11,9 +11,15 @@ interface MediaDAO {
     @Query("SELECT * FROM MEDIA where id=:mediaId")
     fun getMediaById(mediaId: Int): List<Media>
 
+    @Query("SELECT * FROM MEDIA where name=:name")
+    fun getMediaByName(name: String): Media?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     @PrimaryKey(autoGenerate = true)
     fun insert(media: List<Media>)
+
+    @Update
+    fun update(media: Media)
 
     @Insert
     @PrimaryKey(autoGenerate = true)

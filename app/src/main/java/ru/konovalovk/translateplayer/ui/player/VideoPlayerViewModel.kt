@@ -1,6 +1,7 @@
 package ru.konovalovk.translateplayer.ui.player
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Environment
 import android.util.Log
@@ -8,11 +9,16 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import org.videolan.libvlc.MediaPlayer
 import ru.konovalovk.domain.models.Subtitle
 import ru.konovalovk.interactor.TranslatorInteractor
+import ru.konovalovk.repository.db.entity.Media
 import ru.konovalovk.subtitle_parser.habib.SubtitleParser
+import ru.konovalovk.translateplayer.R
 import ru.konovalovk.translateplayer.logic.PlayTimer
+import ru.konovalovk.translateplayer.ui.MyApp
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
@@ -21,6 +27,8 @@ import java.util.concurrent.Executors
 
 class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {
     val TAG = this::class.java.simpleName
+
+    var filename = ""
 
     val translatorInteractor = TranslatorInteractor()
     val executor = Executors.newSingleThreadExecutor()
@@ -88,6 +96,33 @@ class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {
             }
         }
         return out
+    }
+
+    fun prepareMediaDb(filename: String?){
+        viewModelScope.launch {
+            filename?.run {
+                val mediaInDb = MyApp.db.mediaDAO.getMediaByName(this)?.name ?: ""
+                if (mediaInDb.isEmpty()) MyApp.db.mediaDAO.insert(Media(id = 0, name = this, duration = 0))
+            }
+        }
+    }
+
+    fun fillMediaChrono(time: Long) {
+        viewModelScope.launch {
+            val oldMedia = MyApp.db.mediaDAO.getMediaByName(filename) ?: return@launch
+            MyApp.db.mediaDAO.update(Media(oldMedia.id, name = oldMedia.name, duration = oldMedia.duration?.plus(time.toInt())))
+        }
+    }
+
+    fun saveGlobalChrono(sharedPreferences: SharedPreferences, getString: (Int)-> String){
+        viewModelScope.launch {
+            val curMedia = MyApp.db.mediaDAO.getMediaByName(filename) ?: return
+            val strKey = getString(R.string.statistics_media_time_key)
+            val strDefault = getString(R.string.statistics_media_time_default_value)
+            val currValue = sharedPreferences.getString(strKey, strDefault)?.toLong() ?: 0L
+            val newValue = currValue + (curMedia.duration ?: 0)
+            sharedPreferences.edit().putString(strKey, newValue.toString()).apply()
+        }
     }
 
     enum class State{

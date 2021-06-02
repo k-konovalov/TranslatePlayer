@@ -5,14 +5,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.doOnLayout
-import androidx.core.view.marginBottom
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.preference.PreferenceManager
@@ -21,8 +18,6 @@ import com.google.android.material.snackbar.Snackbar
 import org.videolan.libvlc.LibVLC
 import org.videolan.libvlc.Media
 import org.videolan.libvlc.MediaPlayer
-import org.videolan.libvlc.MediaPlayer.Position.Bottom
-import org.videolan.libvlc.MediaPlayer.Position.Top
 import org.videolan.libvlc.util.VLCVideoLayout
 import ru.konovalovk.interactor.TranslatorInteractor
 import ru.konovalovk.subtitle_parser.habib.SubtitleParser
@@ -32,7 +27,6 @@ import ru.konovalovk.translateplayer.logic.transparentMap
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
-import java.lang.Exception
 
 class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
     private val viewModel: VideoPlayerViewModel by viewModels()
@@ -150,11 +144,7 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
             }
         })
         viewModel.playTimer.time.observe(viewLifecycleOwner,{
-            val strKey = getString(R.string.statistics_media_time_key)
-            val strDefault = getString(R.string.statistics_media_time_default_value)
-            val currValue = sharedPreferences.getString(strKey, strDefault)?.toLong() ?: 0L
-            val newValue = currValue + it.value
-            sharedPreferences.edit().putString(strKey, newValue.toString()).apply()
+            viewModel.fillMediaChrono(it.value)
         })
     }
 
@@ -173,6 +163,8 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
     override fun onDestroyView() {
         super.onDestroyView()
         requireActivity().findViewById<MaterialToolbar>(R.id.mtbMain).visibility = View.VISIBLE
+        //Save?
+        viewModel.saveGlobalChrono(sharedPreferences,::getString)
     }
 
     override fun onDestroy() {
@@ -190,6 +182,7 @@ class VideoPlayerFragment : Fragment(R.layout.fragment_video_player) {
 
             try {
                 val uri = arguments?.getParcelable<Uri>(EXTRA_VIDEO_URI) ?: return
+                viewModel.prepareMediaDb(uri.path?.split("/")?.last())
                 media = Media(mLibVLC, requireContext().contentResolver.openFileDescriptor(uri, "r")?.fileDescriptor ?: return)
                 media?.release()
 

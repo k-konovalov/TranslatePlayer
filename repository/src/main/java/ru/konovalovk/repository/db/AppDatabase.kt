@@ -21,12 +21,12 @@ abstract class AppDatabase : RoomDatabase() {
 
     companion object {
         @Volatile
-        var instance: AppDatabase? = null
+        private var instance: AppDatabase? = null
             private set
 
-        fun initDb(applicationContext: Context) {
+        fun getDb(applicationContext: Context): AppDatabase {
             synchronized(this) {
-                instance ?: Room.databaseBuilder(
+                return instance ?: Room.databaseBuilder(
                     applicationContext,
                     AppDatabase::class.java,
                     "AppDatabase.db"

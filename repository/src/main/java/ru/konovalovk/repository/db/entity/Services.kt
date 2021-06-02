@@ -10,8 +10,8 @@ import androidx.room.PrimaryKey
     tableName = "SERVICES",
     foreignKeys = [ForeignKey(entity = Users::class, parentColumns = arrayOf("id"), childColumns = arrayOf("idUser"), onDelete = CASCADE)])
 data class Services (
-    @PrimaryKey
-    val id: Int,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
     val idUser: Int,
     val name: String,
     val apiKey: String
