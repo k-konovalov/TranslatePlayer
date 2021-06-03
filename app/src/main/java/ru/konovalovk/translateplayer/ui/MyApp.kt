@@ -13,11 +13,11 @@ import java.util.*
 class MyApp: Application() {
     val ioScope = CoroutineScope(Dispatchers.IO)
     companion object {
-        lateinit var db: AppDatabase
+        val db: AppDatabase = AppDatabase.instance
     }
 
     override fun onCreate() {
-        db = AppDatabase.getDb(this)
+        AppDatabase.initDb(this)
         //fillDb()
         super.onCreate()
     }

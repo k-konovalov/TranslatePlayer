@@ -29,6 +29,7 @@ import java.util.concurrent.Executors
 
 class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {
     val TAG = this::class.java.simpleName
+    val db = AppDatabase.instance
 
     var filename = ""
 
@@ -133,20 +134,21 @@ class VideoPlayerViewModel(val savedState: SavedStateHandle) : ViewModel() {
         originalLanguage: String,
         translatedLanguage: String
     ) {
-        val oldWord = AppDatabase.instance?.libraryDAO?.getWordByOriginal(originalText)
+        val oldWord = db?.libraryDAO?.getWordByOriginal(originalText)
         oldWord?.run {
             val newWord = Library(id, userId, languageOriginalId, languageTranslationId,serviceId, mediaId, originalWord, translatedWord, translationFrequency + 1, transcription, variants)
-            AppDatabase.instance?.libraryDAO?.update(newWord)
+            db?.libraryDAO?.update(newWord)
         } ?: run {
-            val originalLanguageId = AppDatabase.instance?.languageDAO?.getAll()
+            //todo: 1) check if exist 2) add if not exist 3) move to translation interactor
+            val originalLanguageId = db?.languageDAO?.getAll()
                 ?.first { it.language == originalLanguage }?.id ?: return
-            val translatedLanguageId = AppDatabase.instance?.languageDAO?.getAll()
+            val translatedLanguageId = db.languageDAO?.getAll()
                 ?.first { it.language == translatedLanguage }?.id ?: return
-            val serviceId = AppDatabase.instance?.servicesDAO?.getAll()
+            val serviceId = db?.servicesDAO?.getAll()
                 ?.first { it.name == "test" }?.id ?: return
-            val userId = AppDatabase.instance?.usersDAO?.getAll()?.first()?.id ?: return
+            val userId = db?.usersDAO?.getAll()?.first()?.id ?: return
             val newWord = Library(0,userId,originalLanguageId,translatedLanguageId,serviceId,0, originalText, translatedText, 1,null,null)
-            AppDatabase.instance?.libraryDAO?.insert(newWord)
+            db?.libraryDAO?.insert(newWord)
         }
     }
 
