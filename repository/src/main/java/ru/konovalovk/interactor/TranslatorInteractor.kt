@@ -6,12 +6,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
+import ru.konovalovk.repository.db.AppDatabase
+import ru.konovalovk.repository.db.entity.Library
 import ru.konovalovk.repository.network.NetworkModule
 
 class TranslatorInteractor {
     private val TAG = this::class.java.simpleName
     private val ioScope = CoroutineScope(Dispatchers.IO)
     val translatedWord = MutableLiveData<String>()
+
+    val db = AppDatabase.instance
 
     fun translateWord(text: String) {
         ioScope.launch {
@@ -23,16 +27,24 @@ class TranslatorInteractor {
 
     fun translatePhrase(text: String, translator: Translator) {
         ioScope.launch {
+            val originalLanguage = "en"
+            val translatedLanguage = "ru"
             val improvedText = text.lowercase().replace("\n", "")
             val result = when(translator){
                 Translator.Google -> {
                     NetworkModule.googleApi
-                        .getPhraseTranslation("en", "ru", improvedText)
+                        .getPhraseTranslation(originalLanguage, translatedLanguage, improvedText)
                         .parseGoogleResult()
                 }
             }
             translatedWord.postValue(result)
         }
+    }
+
+
+
+    fun saveWordToDb(originalWord: String, translatedWord: String){
+
     }
 
     //ToDdo: to new class Translator /
