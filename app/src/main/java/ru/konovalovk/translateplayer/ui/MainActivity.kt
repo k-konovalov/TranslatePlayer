@@ -22,6 +22,7 @@ import ru.konovalovk.translateplayer.R
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
     val TAG = this::class.java.simpleName
+    val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE)
     val drawerLayout by lazy { findViewById<DrawerLayout>(R.id.drawer_layout) }
     val navigationView by lazy {findViewById<NavigationView>(R.id.navigationView).apply {
         setNavigationItemSelectedListener { menuItem ->
@@ -39,10 +40,13 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setupNav()
         navigationView
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            // If permission is not granted, ask it.
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 2);
+        permissions.forEach {
+            if (ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED) {
+                // If permission is not granted, ask it.
+                ActivityCompat.requestPermissions(this, permissions, 2);
+            }
         }
+
     }
 
     private fun setupNav(){

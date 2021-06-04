@@ -4,14 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <RadioGroup
-        android:id="@+id/radioGroup"
+        android:id="@+id/rgChoiceWordsOptions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:gravity="center"
-        android:paddingLeft="16dp"
-        android:paddingEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -19,38 +18,38 @@
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:layout_width="match_parent"
             android:layout_height="50dp"
-
-            android:button="null"
-            android:drawableRight="@android:drawable/btn_radio_material_anim"
+            android:paddingStart="16dp"
             android:text="All" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:button="null"
-            android:drawableEnd="@android:drawable/btn_radio_material_anim"
+            android:enabled="false"
+            android:paddingStart="16dp"
             android:text="Last session" />
 
         <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/tietMostFrequent"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:button="null"
-            android:drawableEnd="@android:drawable/btn_radio_material_anim"
-            android:paddingLeft="50dp"
+            android:enabled="false"
+            android:paddingLeft="16dp"
             android:text="Most frequent" />
     </RadioGroup>
 
     <com.google.android.material.textfield.TextInputEditText
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="4dp"
         android:background="@drawable/ic_rounded_gray"
-        app:layout_constraintBottom_toBottomOf="@+id/radioGroup"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:enabled="false"
+        android:inputType="number"
+        app:layout_constraintBottom_toBottomOf="@+id/rgChoiceWordsOptions"
+        app:layout_constraintEnd_toEndOf="@+id/rgChoiceWordsOptions" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/mbNext"
+        android:id="@+id/mbChoiceWordsNext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -58,6 +57,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+        app:layout_constraintTop_toBottomOf="@+id/rgChoiceWordsOptions" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

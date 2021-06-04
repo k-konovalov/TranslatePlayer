@@ -13,7 +13,7 @@ import java.util.*
 class MyApp: Application() {
     val ioScope = CoroutineScope(Dispatchers.IO)
     companion object {
-        val db: AppDatabase = AppDatabase.instance
+        val db: AppDatabase by lazy{AppDatabase.instance}
     }
 
     override fun onCreate() {
