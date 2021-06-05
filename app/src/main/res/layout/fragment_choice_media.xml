@@ -80,7 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Subtitles"
-            app:layout_constraintBottom_toTopOf="@+id/mbNext"
+            app:layout_constraintBottom_toTopOf="@+id/mbChoiceWordsNext"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
@@ -105,7 +105,7 @@
             app:layout_constraintTop_toTopOf="@+id/tfSubtitles" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/mbNext"
+            android:id="@+id/mbChoiceWordsNext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="NEXT"

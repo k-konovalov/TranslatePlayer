@@ -1,16 +1,13 @@
 package ru.konovalovk.translateplayer.ui.player
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 import ru.konovalovk.translateplayer.R
 
 const val EXTRA_VIDEO_URI = "EXTRA_VIDEO_URI"
@@ -23,7 +20,7 @@ class ChoiceMediaFragment: Fragment(R.layout.fragment_choice_media) {
     val tieAudio by lazy { requireView().findViewById<TextInputEditText>(R.id.tieAudio) }
     val mbPlusSubtitles by lazy { requireView().findViewById<MaterialButton>(R.id.mbPlusSubtitles) }
     val tieSubtitles by lazy { requireView().findViewById<TextInputEditText>(R.id.tieSubtitles) }
-    val mbNext by lazy { requireView().findViewById<MaterialButton>(R.id.mbNext) }
+    val mbNext by lazy { requireView().findViewById<MaterialButton>(R.id.mbChoiceWordsNext) }
 
     val bundle = Bundle()
     var currentUriType = ContentType.Video
